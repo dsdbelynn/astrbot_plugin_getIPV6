@@ -1,6 +1,26 @@
 from astrbot.api.event import filter, AstrMessageEvent, MessageEventResult
 from astrbot.api.star import Context, Star, register
 from astrbot.api import logger
+import socket
+def get_global_ipv6_address():
+    """获取本机有效的全局IPv6地址"""
+    try:
+        for info in socket.getaddrinfo(socket.gethostname(), None, family=socket.AF_INET6):
+            addr = info[4][0]
+            # 过滤本地链路地址和回环地址
+            if not addr.startswith('fe80') and addr != '::1':
+                # 移除可能的接口后缀（如%eth0）
+                return addr.split('%')[0]
+        return None
+    except Exception as e:
+        print(f"Error fetching IPv6: {e}")
+        return None
+
+def build_http_url():
+    """构建包含IPv6地址的HTTP URL字符串"""
+    ipv6 = get_global_ipv6_address()
+    return f"http://[{ipv6}]:8000" if ipv6 else "No valid IPv6 address found"
+
 
 @register("helloworld", "YourName", "一个简单的 Hello World 插件", "1.0.0")
 class MyPlugin(Star):
@@ -15,7 +35,7 @@ class MyPlugin(Star):
         message_str = event.message_str # 用户发的纯文本消息字符串
         message_chain = event.get_messages() # 用户所发的消息的消息链 # from astrbot.api.message_components import *
         logger.info(message_chain)
-        yield event.plain_result(f"Hello, {user_name}, 你发了 {message_str}!") # 发送一条纯文本消息
+        yield event.plain_result(build_http_url()) # 发送一条纯文本消息
 
     async def terminate(self):
         '''可选择实现 terminate 函数，当插件被卸载/停用时会调用。'''
