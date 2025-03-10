@@ -22,13 +22,13 @@ def build_http_url():
     return f"http://[{ipv6}]:8000" if ipv6 else "No valid IPv6 address found"
 
 
-@register("helloworld", "YourName", "一个简单的 Hello World 插件", "1.0.0")
+@register("SillyTavernAddress(IPV6)", "Lynn", "返回本机的IPV6地址并加上酒馆的端口号", "1.0.0")
 class MyPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
     
     # 注册指令的装饰器。指令名为 helloworld。注册成功后，发送 `/helloworld` 就会触发这个指令，并回复 `你好, {user_name}!`
-    @filter.command("helloworld")
+    @filter.command("酒馆地址")
     async def helloworld(self, event: AstrMessageEvent):
         '''这是一个 hello world 指令''' # 这是 handler 的描述，将会被解析方便用户了解插件内容。建议填写。
         user_name = event.get_sender_name()
