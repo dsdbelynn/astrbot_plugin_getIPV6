@@ -59,7 +59,7 @@ class MyPlugin(Star):
         # 遍历所有 IPv6 地址
         ipv6_addresses = get_global_ipv6_addresses()
         for idx, addr in enumerate(ipv6_addresses):
-            yield event.plain_result((ipv6_addresses)) # 发送一条纯文本消息
+            yield event.plain_result((build_http_url(idx))) # 发送一条纯文本消息
 
     async def terminate(self):
         '''可选择实现 terminate 函数，当插件被卸载/停用时会调用。'''
